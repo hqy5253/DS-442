@@ -112,6 +112,167 @@ class Puzzle:
         # Print the puzzle in a 3x3 grid
         return f'\n{" ".join(self.value[:3])}\n{" ".join(self.value[3:6])}\n{" ".join(self.value[6:])}\n'
     
+# Question 1.1.a
+class DFS:
+    """
+    Depth First Search class to solve the 8-puzzle problem
+    Written by: Luke Kerwin
+    """
+    def __init__(self):
+        self.visited = set()
+        self.stack = deque()
+        self.solution = []
+
+    def dfs(self, puzzle: Puzzle) -> bool:
+        """
+        Iterative function to solve the 8-puzzle problem
+        :param puzzle: Puzzle object
+        :return: True if solved, False if not
+        """
+        self.visited.add(puzzle.value)
+        self.stack.append(puzzle)
+
+        while self.stack:
+            current_puzzle = self.stack.pop()
+            if current_puzzle.is_solved:
+                self.solution = current_puzzle.moves
+                return True
+
+            for move in current_puzzle.available_moves:
+                new_puzzle = current_puzzle.execute_move(move)
+                if new_puzzle.value not in self.visited:
+                    if not new_puzzle.is_solved:
+                        self.visited.add(new_puzzle.value)
+                        self.stack.append(new_puzzle)
+
+        return False
+    
+    def get_solution(self) -> list:
+        """
+        Get the solution path
+        :return: list
+        """
+        return self.solution
+
+# Question 1.1.b
+class BFS:
+    """
+    Breadth First Search class to solve the 8-puzzle problem
+    Written by: Luke Kerwin
+    """
+    def __init__(self):
+        self.visited = set()
+        self.queue = deque()
+        self.solution = []
+
+    def bfs(self, puzzle: Puzzle) -> bool:
+        """
+        Function to solve the 8-puzzle problem
+        :param puzzle: Puzzle object
+        :return: True if solved, False if not
+        """
+        self.visited.add(puzzle.value)
+        self.queue.append(puzzle)
+        while self.queue:
+            current_puzzle = self.queue.popleft()
+            if current_puzzle.is_solved:
+                self.solution = current_puzzle.moves
+                return True
+            for move in current_puzzle.available_moves:
+                new_puzzle = current_puzzle.execute_move(move)
+                if new_puzzle.value not in self.visited:
+                    self.visited.add(new_puzzle.value)
+                    self.queue.append(new_puzzle)
+        return False
+    
+    def get_solution(self) -> list:
+        """
+        Get the solution path
+        :return: list
+        """
+        return self.solution
+    
+# Question 1.1.c
+class UCS:
+    """
+    Uniform Cost Search class to solve the 8-puzzle problem
+    Written by: Luke Kerwin
+    """
+
+    def __init__(self) -> None:
+        self.visited = set()
+        self.queue = deque()
+        self.solution = []
+    
+    def ucs(self, puzzle: Puzzle) -> bool:
+        """
+        Function to solve the 8-puzzle problem
+        :param puzzle: Puzzle object
+        :return: True if solved, False if not
+        """
+        self.visited.add(puzzle.value)
+        self.queue.append(puzzle)
+        while self.queue:
+            current_puzzle = self.queue.popleft()
+            if current_puzzle.is_solved:
+                self.solution = current_puzzle.moves
+                return True
+            for move in current_puzzle.available_moves:
+                new_puzzle = current_puzzle.execute_move(move)
+                if new_puzzle.value not in self.visited:
+                    self.visited.add(new_puzzle.value)
+                    self.queue.append(new_puzzle)
+            self.queue = deque(sorted(self.queue, key=lambda x: len(x.moves)))
+        return False
+    
+    def get_solution(self) -> list:
+        """
+        Get the solution path
+        :return: list
+        """
+        return self.solution
+
+# Question 1.1.d
+class AStar:
+    """
+    A* Search class to solve the 8-puzzle problem
+    Written by: Luke Kerwin
+    """
+
+    def __init__(self) -> None:
+        self.visited = set()
+        self.queue = deque()
+        self.solution = []
+
+    def a_star(self, puzzle: Puzzle) -> bool:
+        """
+        Function to solve the 8-puzzle problem
+        :param puzzle: Puzzle object
+        :return: True if solved, False if not
+        """
+        self.visited.add(puzzle.value)
+        self.queue.append(puzzle)
+        while self.queue:
+            current_puzzle = self.queue.popleft()
+            if current_puzzle.is_solved:
+                self.solution = current_puzzle.moves
+                return True
+            for move in current_puzzle.available_moves:
+                new_puzzle = current_puzzle.execute_move(move)
+                if new_puzzle.value not in self.visited:
+                    self.visited.add(new_puzzle.value)
+                    self.queue.append(new_puzzle)
+            self.queue = deque(sorted(self.queue, key=lambda x: len(x.moves) + x.heuristic))
+        return False
+    
+    def get_solution(self) -> list:
+        """
+        Get the solution path
+        :return: list
+        """
+        return self.solution
+
+# Question 1.1.e
 class SL_Puzzle:
     """
     Puzzle class to represent the 8-block puzzle that uses Straight Line Distance heuristic
@@ -233,162 +394,6 @@ class SL_Puzzle:
         # Print the puzzle in a 3x3 grid
         return f'\n{" ".join(self.value[:3])}\n{" ".join(self.value[3:6])}\n{" ".join(self.value[6:])}\n'
 
-class DFS:
-    """
-    Depth First Search class to solve the 8-puzzle problem
-    Written by: Luke Kerwin
-    """
-    def __init__(self):
-        self.visited = set()
-        self.stack = deque()
-        self.solution = []
-
-    def dfs(self, puzzle: Puzzle) -> bool:
-        """
-        Iterative function to solve the 8-puzzle problem
-        :param puzzle: Puzzle object
-        :return: True if solved, False if not
-        """
-        self.visited.add(puzzle.value)
-        self.stack.append(puzzle)
-
-        while self.stack:
-            current_puzzle = self.stack.pop()
-            if current_puzzle.is_solved:
-                self.solution = current_puzzle.moves
-                return True
-
-            for move in current_puzzle.available_moves:
-                new_puzzle = current_puzzle.execute_move(move)
-                if new_puzzle.value not in self.visited:
-                    if not new_puzzle.is_solved:
-                        self.visited.add(new_puzzle.value)
-                        self.stack.append(new_puzzle)
-
-        return False
-    
-    def get_solution(self) -> list:
-        """
-        Get the solution path
-        :return: list
-        """
-        return self.solution
-
-class BFS:
-    """
-    Breadth First Search class to solve the 8-puzzle problem
-    Written by: Luke Kerwin
-    """
-    def __init__(self):
-        self.visited = set()
-        self.queue = deque()
-        self.solution = []
-
-    def bfs(self, puzzle: Puzzle) -> bool:
-        """
-        Function to solve the 8-puzzle problem
-        :param puzzle: Puzzle object
-        :return: True if solved, False if not
-        """
-        self.visited.add(puzzle.value)
-        self.queue.append(puzzle)
-        while self.queue:
-            current_puzzle = self.queue.popleft()
-            if current_puzzle.is_solved:
-                self.solution = current_puzzle.moves
-                return True
-            for move in current_puzzle.available_moves:
-                new_puzzle = current_puzzle.execute_move(move)
-                if new_puzzle.value not in self.visited:
-                    self.visited.add(new_puzzle.value)
-                    self.queue.append(new_puzzle)
-        return False
-    
-    def get_solution(self) -> list:
-        """
-        Get the solution path
-        :return: list
-        """
-        return self.solution
-    
-class UCS:
-    """
-    Uniform Cost Search class to solve the 8-puzzle problem
-    Written by: Luke Kerwin
-    """
-
-    def __init__(self) -> None:
-        self.visited = set()
-        self.queue = deque()
-        self.solution = []
-    
-    def ucs(self, puzzle: Puzzle) -> bool:
-        """
-        Function to solve the 8-puzzle problem
-        :param puzzle: Puzzle object
-        :return: True if solved, False if not
-        """
-        self.visited.add(puzzle.value)
-        self.queue.append(puzzle)
-        while self.queue:
-            current_puzzle = self.queue.popleft()
-            if current_puzzle.is_solved:
-                self.solution = current_puzzle.moves
-                return True
-            for move in current_puzzle.available_moves:
-                new_puzzle = current_puzzle.execute_move(move)
-                if new_puzzle.value not in self.visited:
-                    self.visited.add(new_puzzle.value)
-                    self.queue.append(new_puzzle)
-            self.queue = deque(sorted(self.queue, key=lambda x: len(x.moves)))
-        return False
-    
-    def get_solution(self) -> list:
-        """
-        Get the solution path
-        :return: list
-        """
-        return self.solution
-
-class AStar:
-    """
-    A* Search class to solve the 8-puzzle problem
-    Written by: Luke Kerwin
-    """
-
-    def __init__(self) -> None:
-        self.visited = set()
-        self.queue = deque()
-        self.solution = []
-
-    def a_star(self, puzzle: Puzzle) -> bool:
-        """
-        Function to solve the 8-puzzle problem
-        :param puzzle: Puzzle object
-        :return: True if solved, False if not
-        """
-        self.visited.add(puzzle.value)
-        self.queue.append(puzzle)
-        while self.queue:
-            current_puzzle = self.queue.popleft()
-            if current_puzzle.is_solved:
-                self.solution = current_puzzle.moves
-                return True
-            for move in current_puzzle.available_moves:
-                new_puzzle = current_puzzle.execute_move(move)
-                if new_puzzle.value not in self.visited:
-                    self.visited.add(new_puzzle.value)
-                    self.queue.append(new_puzzle)
-            self.queue = deque(sorted(self.queue, key=lambda x: len(x.moves) + x.heuristic))
-        return False
-    
-    def get_solution(self) -> list:
-        """
-        Get the solution path
-        :return: list
-        """
-        return self.solution
-
 if __name__ == '__main__':
     # Assuming input.txt is in the same directory as this file
     with open('input.txt', 'r') as f:
@@ -397,29 +402,29 @@ if __name__ == '__main__':
     
     puzzle = Puzzle(puzzle_string)
 
-    # Question 1.1.a
+    # Question 1.2.a
     dfs = DFS()
     dfs.dfs(puzzle)
     print(','.join(dfs.get_solution()))
 
-    # Question 1.1.a times out, but Professor said it's okay
+    # Question 1.2.a times out, but Professor said it's okay
     
-    # Question 1.1.b
+    # Question 1.2.b
     bfs = BFS()
     bfs.bfs(puzzle)
     print(','.join(bfs.get_solution()))
 
-    # Question 1.1.c
+    # Question 1.2.c
     ucs = UCS()
     ucs.ucs(puzzle)
     print(','.join(ucs.get_solution()))
 
-    # Question 1.1.d
+    # Question 1.2.d
     a_star = AStar()
     a_star.a_star(puzzle)
     print(','.join(a_star.get_solution()))
 
-    # Question 1.1.e
+    # Question 1.2.e
     sl_puzzle = SL_Puzzle(puzzle_string)
     a_star2 = AStar()
     a_star2.a_star(sl_puzzle)
